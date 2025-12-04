@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONIGT</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0;
+            background-color: white;
+            padding: 10px 20px;
+            min-height: 100vh;        
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+        }
+
+        .logo-section {
+            flex: 1;
+        }
+
+        .logo-img {
+            max-width: 880px;
+            height: auto;
+        }
+
+        .status {
+            flex: 0 0 auto;
+            text-align: right;
+        }
+
+        .status-badge {
+            color: rgb(45, 114, 24);
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .contract-info {
+            padding: 0px;
+            margin-bottom: 0;
+        }
+
+        .contract-number {
+            color: #0066b3;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .contract-location {
+            color: #0066b3;
+            font-size: 14px;
+        }
+
+        .section-title {
+            color: #0066b3;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #bcc2c5;  /* crée la ligne bleue */
+            padding-bottom: 5px;               /* espace entre texte et ligne */
+        }
+        
+
+        .party-info {
+            margin-bottom: 25px;
+        }
+
+        .party-name {
+            color: #333;
+            font-size: 15px;
+            margin-left: 20px;
+        }
+
+        .description {
+            color: #333;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: #f8f9fa;
+        }
+
+        .table-container {
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #dee2e6;
+        }
+
+        th {
+            background-color: #d3d3d3;
+            color: rgb(8, 68, 136);
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        td {
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .question-text {
+            color: #dc3545;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+
+        .submit-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #c82333;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: white;
+            max-width: 1200px;
+            margin: 40px auto;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            padding: 0;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .alert-info {
+            background-color: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            color: #004085;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            background-color: #e9ecef;
+            padding: 10px 15px;
+            font-weight: 500;
+            color: #495057;
+            font-size: 14px;
+            border-radius: 3px 3px 0 0;
+            border: 1px solid #ced4da;
+            border-bottom: none;
+        }
+
+        .form-input {
+            padding: 10px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 0 0 3px 3px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            background-color: white;
+            min-height: 42px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+
+        textarea.form-input {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .upload-section {
+            display: flex;
+            gap: 40px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .upload-box {
+            flex: 1;
+        }
+
+        .upload-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .upload-btn {
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .upload-btn:hover {
+            background-color: #138496;
+        }
+
+        .upload-btn::before {
+            content: "⬇";
+            font-size: 16px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-list {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .modal-footer {
+            background-color: #f8f9fa;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #dee2e6;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .btn-cancel {
+            background-color: #ffc107;
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .btn-send {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .btn-cancel:hover {
+            background-color: #e0a800;
+        }
+
+        .btn-send:hover {
+            background-color: #0056b3;
+        }
+
+        /* Success message styles */
+        .success-message {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 40px 60px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            z-index: 2000;
+            text-align: center;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .success-icon {
+            font-size: 60px;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+
+        .success-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 15px;
+        }
+
+        .success-text {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .success-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .success-btn:hover {
+            background-color: #218838;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .upload-section {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                margin-bottom: 0;     /* ⛔ enlève l’espace sous le logo */
+               padding-bottom: 0;
+            }
+
+            .status {
+                margin-top: 10px;
+            }
+
+            .logo-img {
+                max-width: 360px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-section">
+                <img src="https://raw.githubusercontent.com/ANOUAR-BEN/igt.onigt.ma-public-contrat-5/main/logo%20onigt.jpg" 
+     alt="Logo ONIGT" style="height:100px;">
+
+            </div>
+            <div class="status">
+                <div class="status-badge">Contrat : Validé (En Exécution)</div>
+            </div>
+        </div>
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->   
+        <div class="contract-info">
+            <div class="contract-number">Contrat n°: 185/SO/ONIGT/CN-0041/2025</div>
+            <div class="contract-location">Fait à <strong>Marrakech</strong>, le <strong>Mercredi 04 Decembre 2025</strong></div>
+        </div>
+
+        <div class="party-info">
+            <div class="section-title">Le Maitre d'ouvrage (Client):</div>
+            <ul>
+                <li class="party-name"><strong>aziz bernoussi, hamid, bouaazza, slimane</strong></li>
+
+            </ul>
+        </div>
+
+        <div class="party-info">
+            <div class="section-title">Le Maitre d'œuvre (Ingénieur Géomètre Topographe):</div>
+            <ul>
+                <li class="party-name"><strong>SLIMANI Nadia</strong></li>
+                <hr style="border: 1px solid #c8d0d6; width: 100%; margin: 10px 0;">
+
+            </ul>
+        </div>
+
+        <div class="description">
+            Par le présent contrat, l'Ingénieur Géomètre Topographe s'engage envers le maître d'ouvrage de réaliser les prestations synthétisée(s) dans le tableau ci-dessus.
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Réf. foncière</th>
+                        <th>Prestation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>- NI, Marrakech Zone 1</td>
+                        <td>PLAN SITUATION</td>
+                    </tr>
+      <!--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->                
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer">
+            <p class="question-text">Vous avez une question ou une réclamation concernant ce contrat ?</p>
+            <button class="submit-btn" onclick="openModal()">Soumettre une réclamation</button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="alert-info">
+                    Veuillez vérifier attentivement les informations saisies. En cas d'erreur, un message d'alerte vous guidera pour corriger les champs concernés.
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Nom</label>
+                        <input type="text" class="form-input" id="nom" placeholder="Nom">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Prénom</label>
+                        <input type="text" class="form-input" id="prenom" placeholder="Prénom">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Gsm</label>
+                        <input type="text" class="form-input" id="gsm" placeholder="GSM">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">Message</label>
+                        <textarea class="form-input" id="message" placeholder="Écrivez votre message ici..."></textarea>
+                    </div>
+                </div>
+
+                <div class="upload-section">
+                    <div class="upload-box">
+                        <h3 class="upload-title">Images jointes</h3>
+                        <label for="imageUpload" class="upload-btn">Ajouter une image</label>
+                        <input type="file" id="imageUpload" accept="image/*" multiple onchange="handleImageUpload(this)">
+                        <div id="imageList" class="file-list"></div>
+                    </div>
+
+                    <div class="upload-box">
+                        <h3 class="upload-title">Fichiers joints</h3>
+                        <label for="pdfUpload" class="upload-btn">Ajouter un fichier PDF</label>
+                        <input type="file" id="pdfUpload" accept=".pdf" multiple onchange="handlePdfUpload(this)">
+                        <div id="pdfList" class="file-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+                <button class="btn-send" onclick="sendReclamation()">Envoyer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('modal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            clearForm();
+        }
+
+        function clearForm() {
+            document.getElementById('nom').value = '';
+            document.getElementById('prenom').value = '';
+            document.getElementById('gsm').value = '';
+            document.getElementById('message').value = '';
+            document.getElementById('imageUpload').value = '';
+            document.getElementById('pdfUpload').value = '';
+            document.getElementById('imageList').innerHTML = '';
+            document.getElementById('pdfList').innerHTML = '';
+        }
+
+        function handleImageUpload(input) {
+            const fileList = document.getElementById('imageList');
+            fileList.innerHTML = '';
+            if (input.files.length > 0) {
+                Array.from(input.files).forEach(file => {
+                    const div = document.createElement('div');
+                    div.textContent = `📷 ${file.name}`;
+                    fileList.appendChild(div);
+                });
+            }
+        }
+
+        function handlePdfUpload(input) {
+            const fileList = document.getElementById('pdfList');
+            fileList.innerHTML = '';
+            if (input.files.length > 0) {
+                Array.from(input.files).forEach(file => {
+                    const div = document.createElement('div');
+                    div.textContent = `📄 ${file.name}`;
+                    fileList.appendChild(div);
+                });
+            }
+        }
+
+        function sendReclamation() {
+            const nom = document.getElementById('nom').value.trim();
+            const prenom = document.getElementById('prenom').value.trim();
+            const gsm = document.getElementById('gsm').value.trim();
+            const message = document.getElementById('message').value.trim();
+
+            if (!nom || !prenom || !gsm || !message) {
+                alert('Veuillez remplir tous les champs obligatoires');
+                return;
+            }
+
+            closeModal();
+            alert('Votre réclamation a été envoyée avec succès !');
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
